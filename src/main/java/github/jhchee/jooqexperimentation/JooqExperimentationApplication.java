@@ -23,21 +23,25 @@ public class JooqExperimentationApplication {
     @Bean
     CommandLineRunner runner(CustomerRepository customerRepository, ProductRepository productRepository) {
         return args -> {
-            UUID uuid = UUID.randomUUID();
+            // create new instance
             String email = "test@domain.com";
             CustomerRecord customer = new CustomerRecord();
-            customer.setId(uuid);
+            customer.setId(UUID.randomUUID());
             customer.setMetadata("insert");
             customer.setEmail(email);
 
+            // insert
             customerRepository.upsert(customer);
+
+            // update
             customer.setMetadata("update");
             customerRepository.upsert(customer);
 
-
+            // fetch one or more by email field
             CustomerRecord customerWithEmail = customerRepository.getAnyByEmail(email);
             Result<CustomerRecord> customersWithEmail = customerRepository.getAllByEmail(email);
 
+            // batch insert product
             List<ProductRecord> productRecords = new ArrayList<>();
             customerRepository.getAll().forEach(cr -> IntStream.range(1, 10).forEach(i -> {
                 ProductRecord pr = new ProductRecord();
@@ -45,12 +49,12 @@ public class JooqExperimentationApplication {
                 pr.setSku("sku " + i);
                 productRecords.add(pr);
             }));
-
             productRepository.batchInsert(productRecords);
 
+            // get product record of customer
             Result<ProductRecord> productsByCustomer = productRepository.getProductsByRecord(customer);
 
-            // works with graph
+            // works with customer-product graph
             Map<CustomerRecord, Result<ProductRecord>> customerProductGraph = customerRepository.fetchCustomerProducts(customer);
             customerProductGraph.forEach((cr, pr) -> {
                 System.out.println(cr);

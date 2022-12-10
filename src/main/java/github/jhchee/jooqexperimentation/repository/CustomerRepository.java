@@ -5,7 +5,6 @@ import github.jhchee.jooqexperimentation.tables.Product;
 import github.jhchee.jooqexperimentation.tables.records.CustomerRecord;
 import github.jhchee.jooqexperimentation.tables.records.ProductRecord;
 import org.jooq.DSLContext;
-import org.jooq.Record;
 import org.jooq.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -13,7 +12,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
 
-
+/**
+ * One-to-many relationship with product.
+ */
 @Repository
 @Transactional
 public class CustomerRepository {
@@ -43,13 +44,6 @@ public class CustomerRepository {
                 .onConflict(Customer.CUSTOMER.ID)
                 .doUpdate()
                 .set(record)
-                .execute();
-    }
-
-    public void truncate() {
-        dsl.truncate(Customer.CUSTOMER)
-                .restartIdentity()
-                .cascade()
                 .execute();
     }
 
