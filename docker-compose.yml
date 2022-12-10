@@ -1,0 +1,9 @@
+version: 2.14.0
+services:
+  jooq-db:
+    image: postgres:14.6-alpine
+    ports:
+      - '5432:5432'
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
