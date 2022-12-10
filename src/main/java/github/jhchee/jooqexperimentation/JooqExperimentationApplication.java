@@ -1,9 +1,13 @@
 package github.jhchee.jooqexperimentation;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import github.jhchee.jooqexperimentation.repository.CustomerRepository;
 import github.jhchee.jooqexperimentation.repository.ProductRepository;
 import github.jhchee.jooqexperimentation.tables.records.CustomerRecord;
 import github.jhchee.jooqexperimentation.tables.records.ProductRecord;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import org.jooq.JSONB;
 import org.jooq.Record;
 import org.jooq.Result;
 import org.springframework.boot.CommandLineRunner;
@@ -19,6 +23,13 @@ import java.util.stream.IntStream;
 
 @SpringBootApplication
 public class JooqExperimentationApplication {
+    @Data
+    @AllArgsConstructor
+    static class Metadata {
+        String message;
+    }
+
+    private final ObjectMapper mapper = new ObjectMapper();
 
     @Bean
     CommandLineRunner runner(CustomerRepository customerRepository, ProductRepository productRepository) {
@@ -27,14 +38,14 @@ public class JooqExperimentationApplication {
             String email = "test@domain.com";
             CustomerRecord customer = new CustomerRecord();
             customer.setId(UUID.randomUUID());
-            customer.setMetadata("insert");
+            customer.setMetadata(JSONB.valueOf(mapper.writeValueAsString(new Metadata("1"))));
             customer.setEmail(email);
 
             // insert
             customerRepository.upsert(customer);
 
             // update
-            customer.setMetadata("update");
+            customer.setMetadata(JSONB.valueOf(mapper.writeValueAsString(new Metadata("2"))));
             customerRepository.upsert(customer);
 
             // fetch one or more by email field

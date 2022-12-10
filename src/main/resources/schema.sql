@@ -3,9 +3,9 @@ DROP TABLE IF EXISTS customer;
 
 -- customer and product table
 CREATE TABLE customer (
-  id bigserial PRIMARY KEY,
+  id UUID PRIMARY KEY,
   email VARCHAR(255) NOT null,
-  metadata VARCHAR(255) NOT null
+  metadata JSONB
 );
 
 CREATE TABLE product (
@@ -24,5 +24,3 @@ CREATE TABLE log (
 ) PARTITION BY RANGE(created_at);
 
 CREATE TABLE log_default partition OF log DEFAULT;
-INSERT INTO "public"."log" ("created_at") VALUES (TIMESTAMP WITH TIME ZONE '2022-12-10 11:35:46.021438743+00:00')
-

@@ -14,6 +14,7 @@ import java.util.function.Function;
 import org.jooq.Field;
 import org.jooq.ForeignKey;
 import org.jooq.Function3;
+import org.jooq.JSONB;
 import org.jooq.Name;
 import org.jooq.Record;
 import org.jooq.Records;
@@ -63,7 +64,7 @@ public class Customer extends TableImpl<CustomerRecord> {
     /**
      * The column <code>public.customer.metadata</code>.
      */
-    public final TableField<CustomerRecord, String> METADATA = createField(DSL.name("metadata"), SQLDataType.VARCHAR(255).nullable(false), this, "");
+    public final TableField<CustomerRecord, JSONB> METADATA = createField(DSL.name("metadata"), SQLDataType.JSONB, this, "");
 
     private Customer(Name alias, Table<CustomerRecord> aliased) {
         this(alias, aliased, null);
@@ -152,14 +153,14 @@ public class Customer extends TableImpl<CustomerRecord> {
     // -------------------------------------------------------------------------
 
     @Override
-    public Row3<UUID, String, String> fieldsRow() {
+    public Row3<UUID, String, JSONB> fieldsRow() {
         return (Row3) super.fieldsRow();
     }
 
     /**
      * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
      */
-    public <U> SelectField<U> mapping(Function3<? super UUID, ? super String, ? super String, ? extends U> from) {
+    public <U> SelectField<U> mapping(Function3<? super UUID, ? super String, ? super JSONB, ? extends U> from) {
         return convertFrom(Records.mapping(from));
     }
 
@@ -167,7 +168,7 @@ public class Customer extends TableImpl<CustomerRecord> {
      * Convenience mapping calling {@link SelectField#convertFrom(Class,
      * Function)}.
      */
-    public <U> SelectField<U> mapping(Class<U> toType, Function3<? super UUID, ? super String, ? super String, ? extends U> from) {
+    public <U> SelectField<U> mapping(Class<U> toType, Function3<? super UUID, ? super String, ? super JSONB, ? extends U> from) {
         return convertFrom(toType, Records.mapping(from));
     }
 }
