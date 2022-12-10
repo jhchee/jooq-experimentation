@@ -1,12 +1,17 @@
 package github.jhchee.jooqexperimentation.repository;
 
 import github.jhchee.jooqexperimentation.tables.Customer;
+import github.jhchee.jooqexperimentation.tables.Product;
 import github.jhchee.jooqexperimentation.tables.records.CustomerRecord;
+import github.jhchee.jooqexperimentation.tables.records.ProductRecord;
 import org.jooq.DSLContext;
+import org.jooq.Record;
 import org.jooq.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Map;
 
 
 @Repository
@@ -46,5 +51,14 @@ public class CustomerRepository {
                 .restartIdentity()
                 .cascade()
                 .execute();
+    }
+
+    public Map<CustomerRecord, Result<ProductRecord>> fetchCustomerProducts(CustomerRecord customerRecord) {
+        return dsl.select()
+                .from(Customer.CUSTOMER)
+                .join(Product.PRODUCT)
+                .on(Customer.CUSTOMER.ID.eq(Product.PRODUCT.CUSTOMER_ID))
+                .where(Customer.CUSTOMER.ID.eq(customerRecord.getId()))
+                .fetchGroups(Customer.CUSTOMER, Product.PRODUCT);
     }
 }
